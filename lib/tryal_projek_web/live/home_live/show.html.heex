@@ -1,0 +1,26 @@
+<.header>
+  Home {@home.id}
+  <:subtitle>This is a home record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/homes/#{@home}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit home</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Name">{@home.name}</:item>
+</.list>
+
+<.back navigate={~p"/homes"}>Back to homes</.back>
+
+<.modal :if={@live_action == :edit} id="home-modal" show on_cancel={JS.patch(~p"/homes/#{@home}")}>
+  <.live_component
+    module={TryalProjekWeb.HomeLive.FormComponent}
+    id={@home.id}
+    title={@page_title}
+    action={@live_action}
+    home={@home}
+    patch={~p"/homes/#{@home}"}
+  />
+</.modal>
