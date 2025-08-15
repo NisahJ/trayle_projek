@@ -109,15 +109,14 @@ defmodule TryalProjekWeb.UserDashboardLive do
                 <!-- Top Header Bar -->
                 <header class="flex justify-end items-center mb-6">
                     <div class="relative group">
-                        <button class="flex items-center space-x-2 p-2 rounded-full hover:bg-gray-200 transition-colors duration-200 focus:outline-none">
+                        <button class="flex items-center space-x-2 p-2 hover:bg-gray-200 transition-colors duration-200 focus:outline-none">
                             <span class="font-medium">
                             <img src={~p"/images/tableuser.png"} alt="User" class="w-8 h-8 rounded-full border border-gray-300" />
                             <%= @current_user_name %>
                             <img src={~p"/images/kotak - dropdown.png"} alt="User" />
                             </span>
-
-
                         </button>
+
                         <div class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10 hidden group-hover:block">
                             <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-t-xl">Tetapan</a>
                             <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-b-xl">Log Keluar</a>
