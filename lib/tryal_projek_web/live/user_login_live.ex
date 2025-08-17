@@ -2,7 +2,6 @@ defmodule TryalProjekWeb.UserLoginLive do
   use TryalProjekWeb, :live_view
 
   alias TryalProjek.Accounts
-  alias TryalProjekWeb.UserAuth
 
   def render(assigns) do
     ~H"""
