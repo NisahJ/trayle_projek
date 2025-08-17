@@ -29,6 +29,7 @@ defmodule TryalProjekWeb.LamanUtamaLive do
   def mount(_params, _session, socket) do
     if connected?(socket) do
       schedule_gallery_slide()
+      schedule_slide()
     end
 
     {:ok,
@@ -39,17 +40,32 @@ defmodule TryalProjekWeb.LamanUtamaLive do
      |> assign(:gallery_index, 0)}
   end
 
+  defp schedule_slide do
+    # Auto tukar setiap 3 saat
+    Process.send_after(self(), :next_slide, 3000)
+  end
+
+  def handle_info(:next_slide, socket) do
+    schedule_slide() # set semula supaya terus loop
+    total = length(socket.assigns.slides)
+    new_index = rem(socket.assigns.current_index + 1, total)
+
+    {:noreply, assign(socket, :current_index, new_index)}
+  end
+
   # Manual slider utama
   def handle_event("goto_slide", %{"index" => idx}, socket) do
     {:noreply, assign(socket, :current_index, String.to_integer(idx))}
   end
 
   def handle_event("next_slide", _params, socket) do
+    schedule_slide()
     new_index = rem(socket.assigns.current_index + 1, length(socket.assigns.slides))
     {:noreply, assign(socket, :current_index, new_index)}
   end
 
   def handle_event("prev_slide", _params, socket) do
+    schedule_slide()
     new_index = rem(socket.assigns.current_index - 1 + length(socket.assigns.slides), length(socket.assigns.slides))
     {:noreply, assign(socket, :current_index, new_index)}
   end
