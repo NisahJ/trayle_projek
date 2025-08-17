@@ -90,11 +90,10 @@ defmodule TryalProjekWeb.UserRegistrationLive do
             &url(~p"/users/confirm/#{&1}")
           )
 
-        changeset = Accounts.change_user_registration(user)
-        {:noreply, socket |> assign(trigger_submit: true) |> assign_form(changeset)}
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, socket |> assign(check_errors: true) |> assign_form(changeset)}
+         {:noreply,
+         socket
+         |> put_flash(:info, "Pendaftaran berjaya! Sila log masuk.")
+         |> push_navigate(to: ~p"/users/log_in")}
     end
   end
 
