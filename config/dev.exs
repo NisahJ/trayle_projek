@@ -3,7 +3,7 @@ import Config
 # Configure your database
 config :tryal_projek, TryalProjek.Repo,
   username: "postgres",
-  password: "123456789",
+  password: "123",
   hostname: "localhost",
   database: "tryal_projek_dev",
   stacktrace: true,

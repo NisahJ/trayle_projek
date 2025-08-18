@@ -43,6 +43,7 @@ defmodule TryalProjekWeb.Router do
     live "/users/log_in", UserLoginLive, :new
     live "/users/reset_password", UserForgotPasswordLive, :new
     live "/users/reset_password/:token", UserResetPasswordLive, :edit
+    live "/users/settings/ :token", UserSettingsLive, :edit
   end
 
 

@@ -59,11 +59,13 @@ defmodule TryalProjekWeb.LamanUtamaLive do
   end
 
   def handle_event("next_slide", _params, socket) do
+    schedule_slide()
     new_index = rem(socket.assigns.current_index + 1, length(socket.assigns.slides))
     {:noreply, assign(socket, :current_index, new_index)}
   end
 
   def handle_event("prev_slide", _params, socket) do
+    schedule_slide()
     new_index = rem(socket.assigns.current_index - 1 + length(socket.assigns.slides), length(socket.assigns.slides))
     {:noreply, assign(socket, :current_index, new_index)}
   end
