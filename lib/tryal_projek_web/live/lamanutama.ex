@@ -45,6 +45,7 @@ defmodule TryalProjekWeb.LamanUtamaLive do
     Process.send_after(self(), :next_slide, 3000)
   end
 
+  # Auto-slide visimisi
   def handle_info(:next_slide, socket) do
     schedule_slide() # set semula supaya terus loop
     total = length(socket.assigns.slides)
@@ -123,12 +124,12 @@ defmodule TryalProjekWeb.LamanUtamaLive do
           <div class="flex space-x-6">
             <.link navigate={~p"/users/log_in"} class="flex flex-col items-center text-sm hover:opacity-80">
               <img src={~p"/images/orang awam.png"} alt="Pengguna" class="h-8 w-8 mb-1" />
-              <span>Pengguna</span>
+              <span> Pengguna </span>
             </.link>
 
             <.link navigate={~p"/users/log_in"} class="flex flex-col items-center text-sm hover:opacity-80">
               <img src={~p"/images/admin.png"} alt="Admin" class="h-8 w-8 mb-1" />
-              <span>Admin</span>
+              <span> Admin </span>
             </.link>
           </div>
         </div>
