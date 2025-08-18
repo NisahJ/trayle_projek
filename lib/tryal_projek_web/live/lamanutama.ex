@@ -45,6 +45,7 @@ defmodule TryalProjekWeb.LamanUtamaLive do
     Process.send_after(self(), :next_slide, 3000)
   end
 
+  # Auto-slide visimisi
   def handle_info(:next_slide, socket) do
     schedule_slide() # set semula supaya terus loop
     total = length(socket.assigns.slides)

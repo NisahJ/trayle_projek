@@ -2,7 +2,6 @@ defmodule TryalProjekWeb.UserLoginLive do
   use TryalProjekWeb, :live_view
 
   alias TryalProjek.Accounts
-  alias TryalProjekWeb.UserAuth
 
   def render(assigns) do
     ~H"""
@@ -86,7 +85,6 @@ defmodule TryalProjekWeb.UserLoginLive do
         {:noreply, assign(socket, form: form)}
 
         user ->
-          token = Accounts.generate_user_session_token(user)
 
           {:noreply,
            socket
