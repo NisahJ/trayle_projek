@@ -81,8 +81,8 @@ defmodule TryalProjekWeb.UserAuth do
     end
 
     conn
-    |> renew_session()
-    |> delete_resp_cookie(@remember_me_cookie)
+    |> configure_session(drop: true)   # 🔑 buang semua session
+    |> delete_resp_cookie(@remember_me_cookie) # 🔑 buang remember-me cookie
     |> redirect(to: ~p"/lamanutama")
   end
 

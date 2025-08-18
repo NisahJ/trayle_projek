@@ -70,7 +70,7 @@ defmodule TryalProjekWeb.Router do
   scope "/", TryalProjekWeb do
     pipe_through :browser
 
-    delete "/users/log_out", UserSessionController, :delete
+    delete "/halamanutama", UserSessionController, :delete
 
     live_session :current_user,
       on_mount: [{TryalProjekWeb.UserAuth, :mount_current_user}] do

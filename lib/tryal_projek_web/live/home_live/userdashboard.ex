@@ -8,6 +8,8 @@ defmodule TryalProjekWeb.UserDashboardLive do
     current_user = socket.assigns.current_user
     assigns = %{
       current_user_name: current_user.full_name,
+      sidebar_open: false,
+      user_menu_open: false,
       active_applications_count: 3,
       available_courses_count: 3,
       completed_courses_count: 0,
@@ -30,6 +32,7 @@ defmodule TryalProjekWeb.UserDashboardLive do
     {:ok, socket}
   end
 
+  @impl true
   def handle_event("logout", _params, socket) do
     {:noreply,
      socket
@@ -39,17 +42,25 @@ defmodule TryalProjekWeb.UserDashboardLive do
 
   # 'handle_event' digunakan untuk menguruskan interaksi pengguna
   # ========== EVENTS ==========
-    @impl true
+
+    def mount(_params, _session, socket) do
+        socket =
+          socket
+          |> assign(:sidebar_open, false)
+          |> assign(:user_menu_open, false)   # 👈 ini wajib
+
+        {:ok, socket}
+      end
+
     def handle_event("toggle_sidebar", _params, socket) do
       {:noreply, update(socket, :sidebar_open, &(!&1))}
     end
 
-    @impl true
     def handle_event("toggle_user_menu", _params, socket) do
-      {:noreply, update(socket, :user_menu_open, &(!&1))}
+        {:noreply, update(socket, :user_menu_open, &(!&1))}
     end
 
-    @impl true
+
     def handle_event("close_user_menu", _params, socket) do
       {:noreply, assign(socket, :user_menu_open, false)}
     end
@@ -59,7 +70,7 @@ defmodule TryalProjekWeb.UserDashboardLive do
     @impl true
     def render(assigns) do
       ~H"""
-      <div class="bg-gray-100 min-h-screen antialiased text-gray-800">
+      <div class="bg-white-100 min-h-screen antialiased text-gray-800">
 
         <!-- Sidebar -->
         <aside
@@ -115,25 +126,33 @@ defmodule TryalProjekWeb.UserDashboardLive do
 
                 <!-- Top Header Bar -->
                 <header class="flex justify-end items-center mb-6">
-                    <div class="relative group">
-                        <button class="flex items-center space-x-2 p-2 justify:between hover:bg-gray-200 transition-colors duration-200 focus:outline-none">
-                            <span class="font-medium">
-                            <img src={~p"/images/tableuser.png"} alt="User" class="w-8 h-8 rounded-full border border-gray-300" />
-                            <%= @current_user_name %>
-                            <img src={~p"/images/kotak - dropdown.png"} alt="User" />
-                            </span>
-                        </button>
+                        <div class="relative"
 
-                        <div class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10 hidden group-hover:block">
-                              <.link navigate={~p"/settings"} class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-t-xl">
-                                Tetapan
+                <!-- Button User -->
+                     <button
+                            phx-click="toggle_user_menu"
+                                class="flex items-center space-x-2 p-2 hover:bg-indigo-100 rounded-lg gap-6 transition-colors duration-200 focus:outline-none">
+                                      <img src={~p"/images/tableuser.png"} alt="User" class="w-8 h-8 rounded-full border border-gray-300" />
+                                      <span class="font-medium"><%= @current_user_name %></span>
+                                      <img src={~p"/images/kotak - dropdown.png"} alt="Dropdown" />
+                     </button>
+
+                     <!-- Dropdown Menu -->
+                     <%= if @user_menu_open do %>
+                        <div class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 z-10">
+                              <!-- Setting -->
+                              <.link navigate={~p"/users/settings"}
+                                 class="block px-4 py-2 text-sm text-black-700 hover:bg-gray-100 rounded-t-xl">
+                                     Tetapan
                               </.link>
 
-                              <button phx-click="logout"
-                                    class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-b-xl">
+                              <!-- Logout -->
+                              <.link href={~p"/halamanutama"} method="delete"
+                                class="block w-full text-left px-4 py-2 text-sm text-black-700 hover:bg-gray-100 rounded-b-xl">
                                      Log Keluar
-                              </button>
+                              </.link>
                         </div>
+                      <% end %>
                     </div>
                 </header>
 

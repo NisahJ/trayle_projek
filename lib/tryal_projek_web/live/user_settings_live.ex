@@ -1,167 +1,83 @@
 defmodule TryalProjekWeb.UserSettingsLive do
   use TryalProjekWeb, :live_view
-
   alias TryalProjek.Accounts
+
+  def mount(_params, _session, socket) do
+    user = socket.assigns.current_user
+
+    form =
+      to_form(%{
+        "email" => user.email,
+        "password" => "",
+        "password_confirmation" => ""
+      }, as: "user")
+
+    {:ok, assign(socket, form: form)}
+  end
 
   def render(assigns) do
     ~H"""
-    <.header class="text-center">
-      Account Settings
-      <:subtitle>Urus tetapan alamat e-mel dan kata laluan akaun anda</:subtitle>
-    </.header>
+    <div class="flex items-center justify-center min-h-screen bg-gray-50">
+      <div class="w-full max-w-xl bg-white rounded-2xl shadow p-8 space-y-6">
 
-    <div class="space-y-12 divide-y">
-      <div>
-        <.simple_form
-          for={@email_form}
-          id="email_form"
-          phx-submit="update_email"
-          phx-change="validate_email"
-        >
-          <.input field={@email_form[:email]} type="email" label="Email" required />
-          <.input
-            field={@email_form[:current_password]}
-            name="current_password"
-            id="current_password_for_email"
-            type="password"
-            label="Current password"
-            value={@email_form_current_password}
-            required
-          />
-          <:actions>
-            <.button phx-disable-with="Changing...">Change Email</.button>
-          </:actions>
-        </.simple_form>
-      </div>
-      <div>
-        <.simple_form
-          for={@password_form}
-          id="password_form"
-          action={~p"/users/log_in?_action=password_updated"}
-          method="post"
-          phx-change="validate_password"
-          phx-submit="update_password"
-          phx-trigger-action={@trigger_submit}
-        >
-          <input
-            name={@password_form[:email].name}
-            type="hidden"
-            id="hidden_user_email"
-            value={@current_email}
-          />
-          <.input field={@password_form[:password]} type="password" label="Kata Laluan Baru" required />
-          <.input
-            field={@password_form[:password_confirmation]}
-            type="password"
-            label="Confirm new password"
-          />
-          <.input
-            field={@password_form[:current_password]}
-            name="current_password"
-            type="password"
-            label="Current password"
-            id="current_password_for_password"
-            value={@current_password}
-            required
-          />
-          <:actions>
-            <.button phx-disable-with="Changing...">Tukar Kata Laluan</.button>
-          </:actions>
-        </.simple_form>
+        <!-- Avatar -->
+        <div class="flex flex-col items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-20 h-20 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+          </svg>
+          <h2 class="mt-4 text-2xl font-bold"> Tetapan Pengguna </h2>
+          <p class="text-sm text-center text-gray-600"> Sila Masukkan Email dan Kata Laluan baru anda untuk dikemaskini </p>
+        </div>
+
+        <!-- Form -->
+        <.form for={@form} id="settings_form" phx-submit="save" phx-change="validate">
+
+        <!-- Email -->
+          <div class="mt-4">
+            <label class="block text-sm font-semibold"> Email </label>
+            <.input field={@form[:email]} type="email" class="mt-1 w-full" required />
+          </div>
+
+          <!-- Kata Laluan -->
+          <div class="mt-4">
+            <label class="block text-sm font-semibold"> Kata Laluan Baru </label>
+            <.input field={@form[:password]} type="password" class="mt-1 w-full" required />
+          </div>
+
+          <!-- Sahkan Kata Laluan -->
+          <div class="mt-4">
+            <label class="block text-sm font-semibold"> Sahkan Kata Laluan </label>
+            <.input field={@form[:password_confirmation]} type="password" class="mt-1 w-full" required />
+          </div>
+
+          <!-- Button -->
+          <div class="mt-6">
+            <.button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg font-semibold">
+              Simpan
+            </.button>
+          </div>
+        </.form>
       </div>
     </div>
     """
   end
 
-  def mount(%{"token" => token}, _session, socket) do
-    socket =
-      case Accounts.update_user_email(socket.assigns.current_user, token) do
-        :ok ->
-          put_flash(socket, :info, "Email changed successfully.")
-
-        :error ->
-          put_flash(socket, :error, "Email change link is invalid or it has expired.")
-      end
-
-    {:ok, push_navigate(socket, to: ~p"/users/settings")}
+  def handle_event("validate", %{"user" => params}, socket) do
+    {:noreply, assign(socket, form: to_form(params, as: "user"))}
   end
 
-  def mount(_params, _session, socket) do
-    user = socket.assigns.current_user
-    email_changeset = Accounts.change_user_email(user)
-    password_changeset = Accounts.change_user_password(user)
-
-    socket =
-      socket
-      |> assign(:current_password, nil)
-      |> assign(:email_form_current_password, nil)
-      |> assign(:current_email, user.email)
-      |> assign(:email_form, to_form(email_changeset))
-      |> assign(:password_form, to_form(password_changeset))
-      |> assign(:trigger_submit, false)
-
-    {:ok, socket}
-  end
-
-  def handle_event("validate_email", params, socket) do
-    %{"current_password" => password, "user" => user_params} = params
-
-    email_form =
-      socket.assigns.current_user
-      |> Accounts.change_user_email(user_params)
-      |> Map.put(:action, :validate)
-      |> to_form()
-
-    {:noreply, assign(socket, email_form: email_form, email_form_current_password: password)}
-  end
-
-  def handle_event("update_email", params, socket) do
-    %{"current_password" => password, "user" => user_params} = params
+  def handle_event("save", %{"user" => params}, socket) do
     user = socket.assigns.current_user
 
-    case Accounts.apply_user_email(user, password, user_params) do
-      {:ok, applied_user} ->
-        Accounts.deliver_user_update_email_instructions(
-          applied_user,
-          user.email,
-          &url(~p"/users/settings/confirm_email/#{&1}")
-        )
-
-        info = "A link to confirm your email change has been sent to the new address."
-        {:noreply, socket |> put_flash(:info, info) |> assign(email_form_current_password: nil)}
+    case Accounts.update_user(user, params) do
+      {:ok, _updated_user} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "Tetapan berjaya disimpan.")
+         |> push_navigate(to: ~p"/userdashboard")}
 
       {:error, changeset} ->
-        {:noreply, assign(socket, :email_form, to_form(Map.put(changeset, :action, :insert)))}
-    end
-  end
-
-  def handle_event("validate_password", params, socket) do
-    %{"current_password" => password, "user" => user_params} = params
-
-    password_form =
-      socket.assigns.current_user
-      |> Accounts.change_user_password(user_params)
-      |> Map.put(:action, :validate)
-      |> to_form()
-
-    {:noreply, assign(socket, password_form: password_form, current_password: password)}
-  end
-
-  def handle_event("update_password", params, socket) do
-    %{"current_password" => password, "user" => user_params} = params
-    user = socket.assigns.current_user
-
-    case Accounts.update_user_password(user, password, user_params) do
-      {:ok, user} ->
-        password_form =
-          user
-          |> Accounts.change_user_password(user_params)
-          |> to_form()
-
-        {:noreply, assign(socket, trigger_submit: true, password_form: password_form)}
-
-      {:error, changeset} ->
-        {:noreply, assign(socket, password_form: to_form(changeset))}
+        {:noreply, assign(socket, form: to_form(changeset, as: "user"))}
     end
   end
 end
