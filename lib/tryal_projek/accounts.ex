@@ -44,6 +44,7 @@ defmodule TryalProjek.Accounts do
     if User.valid_password?(user, password), do: user
   end
 
+
   @doc """
   Gets a single user.
 

@@ -64,7 +64,7 @@ defmodule TryalProjek.Accounts.User do
   defp validate_password_confirmation(changeset, opts) do
     changeset
     |> validate_required([:password_confirmation])
-    |> validate_length(:password, min: 12, max: 72, message: "Kata laluan tidak sepadan")
+    |> validate_length(:password_confirmation, min: 12, max: 72, message: "Kata laluan tidak sepadan")
     |> validate_confirmation(:password, message: "Kata laluan tidak sepadan") # <-- ini penting
     |> maybe_hash_password(opts)
   end
