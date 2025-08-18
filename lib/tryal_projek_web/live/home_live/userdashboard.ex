@@ -109,7 +109,7 @@ defmodule TryalProjekWeb.UserDashboardLive do
                 <!-- Top Header Bar -->
                 <header class="flex justify-end items-center mb-6">
                     <div class="relative group">
-                        <button class="flex items-center space-x-2 p-2 hover:bg-gray-200 transition-colors duration-200 focus:outline-none">
+                        <button class="flex items-center space-x-2 p-2 justify:between hover:bg-gray-200 transition-colors duration-200 focus:outline-none">
                             <span class="font-medium">
                             <img src={~p"/images/tableuser.png"} alt="User" class="w-8 h-8 rounded-full border border-gray-300" />
                             <%= @current_user_name %>
