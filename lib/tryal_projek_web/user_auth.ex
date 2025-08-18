@@ -83,7 +83,7 @@ defmodule TryalProjekWeb.UserAuth do
     conn
     |> renew_session()
     |> delete_resp_cookie(@remember_me_cookie)
-    |> redirect(to: ~p"/")
+    |> redirect(to: ~p"/lamanutama")
   end
 
   @doc """

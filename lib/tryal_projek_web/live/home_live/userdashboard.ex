@@ -30,6 +30,13 @@ defmodule TryalProjekWeb.UserDashboardLive do
     {:ok, socket}
   end
 
+  def handle_event("logout", _params, socket) do
+    {:noreply,
+     socket
+     |> put_flash(:info, "Anda telah log keluar.")
+     |> redirect(to: ~p"/lamanutama")}
+  end
+
   # 'handle_event' digunakan untuk menguruskan interaksi pengguna
   # ========== EVENTS ==========
     @impl true
@@ -45,11 +52,6 @@ defmodule TryalProjekWeb.UserDashboardLive do
     @impl true
     def handle_event("close_user_menu", _params, socket) do
       {:noreply, assign(socket, :user_menu_open, false)}
-    end
-
-    @impl true
-    def handle_event("logout", _params, socket) do
-      {:noreply, redirect(socket, to: ~p"/users/log_out")}
     end
 
   # 'render' berfungsi sebagai template HTML LiveView
@@ -123,8 +125,14 @@ defmodule TryalProjekWeb.UserDashboardLive do
                         </button>
 
                         <div class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10 hidden group-hover:block">
-                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-t-xl">Tetapan</a>
-                            <button phx-click="logout" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-b-xl">Log Keluar</button>
+                              <.link navigate={~p"/settings"} class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-t-xl">
+                                Tetapan
+                              </.link>
+
+                              <button phx-click="logout"
+                                    class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-b-xl">
+                                     Log Keluar
+                              </button>
                         </div>
                     </div>
                 </header>
