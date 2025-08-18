@@ -47,6 +47,11 @@ defmodule TryalProjekWeb.UserDashboardLive do
       {:noreply, assign(socket, :user_menu_open, false)}
     end
 
+    @impl true
+    def handle_event("logout", _params, socket) do
+      {:noreply, redirect(socket, to: ~p"/users/log_out")}
+    end
+
   # 'render' berfungsi sebagai template HTML LiveView
   # ========== RENDER ==========
     @impl true
@@ -119,7 +124,7 @@ defmodule TryalProjekWeb.UserDashboardLive do
 
                         <div class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10 hidden group-hover:block">
                             <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-t-xl">Tetapan</a>
-                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-b-xl">Log Keluar</a>
+                            <button phx-click="logout" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-b-xl">Log Keluar</button>
                         </div>
                     </div>
                 </header>

@@ -2,6 +2,7 @@ defmodule TryalProjekWeb.UserLoginLive do
   use TryalProjekWeb, :live_view
 
   alias TryalProjek.Accounts
+  alias TryalProjekWeb.UserAuth
 
   def render(assigns) do
     ~H"""
@@ -17,30 +18,29 @@ defmodule TryalProjekWeb.UserLoginLive do
           <p class="text-sm text-gray-600">Masukkan maklumat akaun anda untuk mengakses sistem</p>
         </div>
 
-        <!-- Form -->
-        <.form for={@form} id="login_form" phx-submit="save" phx-change="validate">
+        <!-- Form - menggunakan regular form untuk POST ke controller -->
+        <form action={~p"/users/log_in"} method="post" id="login_form">
+          <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
 
           <!-- Email -->
           <div class="mt-4">
             <label class="block text-sm font-semibold">Email</label>
-            <.input field={@form[:email]} type="email" placeholder="contoh@email.com" class="mt-1 w-full" required />
+            <input type="email" name="user[email]" placeholder="contoh@email.com" class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" required />
           </div>
 
           <!-- Kata Laluan -->
           <div class="mt-4 relative">
             <label class="block text-sm font-semibold">Kata Laluan</label>
-            <.input field={@form[:password]} type="password" placeholder="Masukkan kata laluan" class="mt-1 w-full pr-10" required />
-            <button type="button" phx-click="toggle_password" class="absolute right-3 top-8 text-gray-500">
-            </button>
+            <input type="password" name="user[password]" placeholder="Masukkan kata laluan" class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10" required />
           </div>
 
           <!-- Button -->
           <div class="mt-6">
-            <.button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg font-semibold">
+            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg font-semibold">
               Log Masuk
-            </.button>
+            </button>
           </div>
-        </.form>
+        </form>
 
         <!-- Link ke Daftar Akaun -->
         <div class="bg-gray-100 py-3 text-center rounded-lg">
@@ -64,33 +64,6 @@ defmodule TryalProjekWeb.UserLoginLive do
 
   def mount(_params, _session, socket) do
     email = Phoenix.Flash.get(socket.assigns.flash, :email)
-    form = to_form(%{"email" => email, "password" => ""}, as: "user")
-    {:ok, assign(socket, form: form), temporary_assigns: [form: form]}
-  end
-
-  # Untuk update form masa user taip
-  def handle_event("validate", %{"user" => params}, socket) do
-    form = to_form(params, as: "user")
-    {:noreply, assign(socket, form: form)}
-  end
-
-  # Untuk login pengguna
-  def handle_event("save", %{"user" => %{"email" => email, "password" => password}}, socket) do
-    case Accounts.get_user_by_email_and_password(email, password) do
-      nil ->
-        form =
-          socket.assigns.form
-          |> Map.put(:errors, [email: {"Email atau kata laluan tidak sah", []}])
-
-        {:noreply, assign(socket, form: form)}
-
-        user ->
-
-          {:noreply,
-           socket
-           |> put_flash(:info, "Selamat datang, #{user.full_name}!")
-           |> assign(:current_user_name, user.full_name)
-           |> push_navigate(to: "/userdashboard")} # <-- direct ke dashboard
-      end
+    {:ok, assign(socket, email: email)}
   end
 end
