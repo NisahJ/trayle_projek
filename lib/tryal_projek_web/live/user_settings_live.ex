@@ -55,10 +55,19 @@ defmodule TryalProjekWeb.UserSettingsLive do
           <.input field={@password_form[:password_confirmation]} type="password" label="Confirm new password" required />
 
           <:actions>
-            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              Simpan Kata Laluan
-            </button>
-          </:actions>
+            <div class="relative w-full flex justify-center items-center">
+                <!-- Button Simpan (absolutely left) -->
+                  <button type="submit" class="absolute left-0 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                       Simpan Kata Laluan
+                   </button>
+
+                <!-- Button Balik (absolutely right) -->
+                   <.link navigate={~p"/userdashboard"}
+                       class="absolute right-0 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">
+                             Balik ke Dashboard
+                   </.link>
+             </div>
+           </:actions>
         </.simple_form>
       </div>
     </div>
