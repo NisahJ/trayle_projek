@@ -2,6 +2,7 @@ defmodule TryalProjekWeb.Router do
   use TryalProjekWeb, :router
 
   import TryalProjekWeb.UserAuth
+  alias TryalProjekWeb.PageLive
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -20,17 +21,17 @@ defmodule TryalProjekWeb.Router do
   scope "/", TryalProjekWeb do
     pipe_through :browser
 
-    # Root route → terus ke Laman Utama
     live "/", LamanUtamaLive
 
-    # Kalau nak route /lamanutama kekal
     live "/lamanutama", LamanUtamaLive
 
     live "/mengenaikami", MengenaiKamiLive
 
-    live "/program", ProgramKursusLive
+    live "/programkursus", ProgramKursusLive
 
-    # Home routes
+    live "/hubungi", HubungiLive
+
+# Home routes
     live "/homes", HomeLive.Index, :index
     live "/homes/new", HomeLive.Index, :new
     live "/homes/:id/edit", HomeLive.Index, :edit
@@ -38,49 +39,13 @@ defmodule TryalProjekWeb.Router do
     live "/homes/:id/show/edit", HomeLive.Show, :edit
   end
 
-  # Authentication routes - untuk user yang belum log masuk
-  scope "/", TryalProjekWeb do
-    pipe_through [:browser, :redirect_if_user_is_authenticated]
-
-    live_session :redirect_if_user_is_authenticated,
-      on_mount: [{TryalProjekWeb.UserAuth, :redirect_if_user_is_authenticated}] do
-      live "/users/register", UserRegistrationLive, :new
-      live "/users/log_in", UserLoginLive, :new
-      live "/users/reset_password", UserForgotPasswordLive, :new
-      live "/users/reset_password/:token", UserResetPasswordLive, :edit
-    end
-
-    # POST route untuk log masuk - menggunakan controller
-    post "/users/log_in", UserSessionController, :create
-  end
-
-  # Protected routes - untuk user yang sudah log masuk
-  scope "/", TryalProjekWeb do
-    pipe_through [:browser, :require_authenticated_user]
-
-    live_session :require_authenticated_user,
-      on_mount: [{TryalProjekWeb.UserAuth, :ensure_authenticated}] do
-      live "/userdashboard", UserDashboardLive
-      live "/users/settings", UserSettingsLive, :edit
-      live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
-    end
-  end
-
-  # General routes - untuk semua user
-  scope "/", TryalProjekWeb do
-    pipe_through :browser
-
-    delete "/halamanutama", UserSessionController, :delete
-
-    live_session :current_user,
-      on_mount: [{TryalProjekWeb.UserAuth, :mount_current_user}] do
-      live "/users/confirm/:token", UserConfirmationLive, :edit
-      live "/users/confirm", UserConfirmationInstructionsLive, :new
-    end
-  end
+  # Other scopes may use custom stacks.
+  # scope "/api", SpkpProjectWeb do
+  #   pipe_through :api
+  # end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
-  if Application.compile_env(:tryal_projek, :dev_routes) do
+  if Application.compile_env(:trayle_project, :dev_routes) do
     # If you want to use the LiveDashboard in production, you should put
     # it behind authentication and allow only admins to access it.
     # If your application does not have an admins-only section yet,
@@ -93,6 +58,56 @@ defmodule TryalProjekWeb.Router do
 
       live_dashboard "/dashboard", metrics: TryalProjekWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
+    end
+  end
+
+  ## Authentication routes
+
+  scope "/", TryalProjekWeb do
+    pipe_through [:browser, :redirect_if_user_is_authenticated]
+
+    live_session :redirect_if_user_is_authenticated,
+      on_mount: [{TryalProjekWeb.UserAuth, :redirect_if_user_is_authenticated}] do
+      live "/users/register", UserRegistrationLive, :new
+      live "/users/log_in", UserLoginLive, :new
+      live "/users/forgot_password", UserForgotPasswordLive, :new
+      live "/users/reset_password/:token", UserResetPasswordLive, :edit
+    end
+
+    post "/users/log_in", UserSessionController, :create
+  end
+
+  scope "/", TryalProjekWeb do
+    pipe_through [:browser, :require_authenticated_user]
+
+    live_session :require_authenticated_user,
+      on_mount: [{TryalProjekWeb.UserAuth, :ensure_authenticated}] do
+      live "/userdashboard", UserDashboardLive
+      live "/users/settings", UserSettingsLive, :edit
+      live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
+      live "/admin", PageLive, :admin
+      live "/user", PageLive, :user
+    end
+  end
+
+    scope "/", TryalProjekWeb do
+      pipe_through [:browser, :require_authenticated_user]
+
+      live "/userdashboard", UserDashboardLive, :index
+      live "/userprofile", UserProfileLive, :index
+      live "/senaraikursususer", SenaraiKursusLive, :index
+      live "/permohonanuser", PermohonanUserLive, :index
+  end
+
+  scope "/", TryalProjekWeb do
+    pipe_through [:browser]
+
+    delete "/halamanutama", UserSessionController, :delete
+
+    live_session :current_user,
+      on_mount: [{TryalProjekWeb.UserAuth, :mount_current_user}] do
+      live "/users/confirm/:token", UserConfirmationLive, :edit
+      live "/users/confirm", UserConfirmationInstructionsLive, :new
     end
   end
 end

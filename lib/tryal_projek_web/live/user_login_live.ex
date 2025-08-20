@@ -2,7 +2,7 @@ defmodule TryalProjekWeb.UserLoginLive do
   use TryalProjekWeb, :live_view
 
   alias TryalProjek.Accounts
-  alias TryalProjekWeb.UserAuth
+  alias TryalProjek.UserAuth
 
   def render(assigns) do
     ~H"""
@@ -52,7 +52,7 @@ defmodule TryalProjekWeb.UserLoginLive do
 
         <!-- Link Lupa Kata Laluan -->
         <div class="bg-gray-100 py-3 text-center rounded-lg">
-          <.link navigate={~p"/users/reset_password"} class="font-bold text-blue-600 hover:underline">
+          <.link navigate={~p"/users/forgot_password"} class="font-bold text-blue-600 hover:underline">
             Lupa Kata Laluan?
           </.link>
         </div>

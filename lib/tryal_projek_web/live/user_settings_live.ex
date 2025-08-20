@@ -1,5 +1,7 @@
+
 defmodule TryalProjekWeb.UserSettingsLive do
   use TryalProjekWeb, :live_view
+
   alias TryalProjek.Accounts
 
   ## Mount
@@ -40,7 +42,7 @@ defmodule TryalProjekWeb.UserSettingsLive do
           <.input field={@email_form[:current_password]} type="password" label="Kata Laluan" required />
 
           <:actions>
-            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700">
+            <button type="submit" class="px-4 py-2 font-medium bg-blue-500 text-white rounded-lg hover:bg-blue-700">
               Simpan Email
             </button>
           </:actions>
@@ -55,9 +57,9 @@ defmodule TryalProjekWeb.UserSettingsLive do
           <.input field={@password_form[:password_confirmation]} type="password" label="Pengesahan Kata Laluan Baru" required />
 
           <:actions>
-            <div class="relative w-full flex justify-center items-center">
+            <div class="mt-6 relative w-full flex justify-center items-center">
                 <!-- Button Simpan (absolutely left) -->
-                  <button type="submit" class="absolute left-0 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700">
+                  <button type="submit" class="absolute left-0 px-4 py-2 font-medium bg-blue-500 text-white rounded-lg hover:bg-blue-700">
                        Simpan Kata Laluan
                    </button>
 
@@ -72,6 +74,36 @@ defmodule TryalProjekWeb.UserSettingsLive do
       </div>
     </div>
     """
+  end
+
+  def mount(%{"token" => token}, _session, socket) do
+    socket =
+      case Accounts.update_user_email(socket.assigns.current_user, token) do
+        :ok ->
+          put_flash(socket, :info, "Email changed successfully.")
+
+        :error ->
+          put_flash(socket, :error, "Email change link is invalid or it has expired.")
+      end
+
+    {:ok, push_navigate(socket, to: ~p"/users/settings")}
+  end
+
+  def mount(_params, _session, socket) do
+    user = socket.assigns.current_user
+    email_changeset = Accounts.change_user_email(user)
+    password_changeset = Accounts.change_user_password(user)
+
+    socket =
+      socket
+      |> assign(:current_password, nil)
+      |> assign(:email_form_current_password, nil)
+      |> assign(:current_email, user.email)
+      |> assign(:email_form, to_form(email_changeset))
+      |> assign(:password_form, to_form(password_changeset))
+      |> assign(:trigger_submit, false)
+
+    {:ok, socket}
   end
 
   ## Handle update email
@@ -127,4 +159,5 @@ defmodule TryalProjekWeb.UserSettingsLive do
         {:noreply, assign(socket, form: to_form(changeset, as: "user"))}
     end
   end
+
 end

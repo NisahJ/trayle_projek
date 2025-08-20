@@ -1,7 +1,8 @@
+
 defmodule TryalProjekWeb.UserForgotPasswordLive do
   use TryalProjekWeb, :live_view
 
-  alias TryalProjek.Accounts
+  alias TryalProjekWeb.Accounts
 
   def render(assigns) do
     ~H"""

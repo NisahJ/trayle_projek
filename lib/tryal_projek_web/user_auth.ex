@@ -132,16 +132,16 @@ defmodule TryalProjekWeb.UserAuth do
   Use the `on_mount` lifecycle macro in LiveViews to mount or authenticate
   the current_user:
 
-      defmodule TryalProjekWeb.PageLive do
-        use TryalProjekWeb, :live_view
+      defmodule SpkpProjectWeb.PageLive do
+        use SpkpProjectWeb, :live_view
 
-        on_mount {TryalProjekWeb.UserAuth, :mount_current_user}
+        on_mount {SpkpProjectWeb.UserAuth, :mount_current_user}
         ...
       end
 
   Or use the `live_session` of your router to invoke the on_mount callback:
 
-      live_session :authenticated, on_mount: [{TryalProjekWeb.UserAuth, :ensure_authenticated}] do
+      live_session :authenticated, on_mount: [{SpkpProjectWeb.UserAuth, :ensure_authenticated}] do
         live "/profile", ProfileLive, :index
       end
   """
@@ -225,5 +225,10 @@ defmodule TryalProjekWeb.UserAuth do
 
   defp maybe_store_return_to(conn), do: conn
 
-  defp signed_in_path(_conn), do: ~p"/userdashboard"
+  defp signed_in_path(conn) do
+    case conn.assigns.current_user.role do
+      "admin" -> ~p"/admin"
+      "user" -> ~p"/userdashboard"
+    end
+  end
 end

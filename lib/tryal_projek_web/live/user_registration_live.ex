@@ -70,6 +70,7 @@ defmodule TryalProjekWeb.UserRegistrationLive do
     """
   end
 
+  @impl true
   def mount(_params, _session, socket) do
     changeset = Accounts.change_user_registration(%User{})
 
@@ -90,12 +91,12 @@ defmodule TryalProjekWeb.UserRegistrationLive do
             &url(~p"/users/confirm/#{&1}")
           )
 
-         {:noreply,
-         socket
-         |> put_flash(:info, "Pendaftaran berjaya! Sila log masuk.")
-         |> push_navigate(to: ~p"/users/log_in")}
-    end
-  end
+          {:noreply,
+          socket
+          |> put_flash(:info, "Pendaftaran berjaya! Sila log masuk.")
+          |> push_navigate(to: ~p"/users/log_in")}
+     end
+   end
 
   def handle_event("validate", %{"user" => user_params}, socket) do
     changeset = Accounts.change_user_registration(%User{}, user_params)

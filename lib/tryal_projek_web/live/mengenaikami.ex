@@ -74,7 +74,7 @@ html {
        class="px-1 py-1 bg-[#09033F] text-white font-medium hover:bg-[#1a155f] rounded">
       Mengenai Kami
     </a>
-    <a href={~p"/program"}
+    <a href={~p"/programkursus"}
        class="px-1 py-1 bg-[#09033F] text-white font-medium hover:bg-[#1a155f] rounded">
       Program
     </a>
@@ -236,6 +236,5 @@ document.addEventListener("DOMContentLoaded", function () {
 </div>
 
 """
-
       end
     end

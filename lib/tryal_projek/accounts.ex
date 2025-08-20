@@ -7,6 +7,7 @@ defmodule TryalProjek.Accounts do
   alias TryalProjek.Repo
 
   alias TryalProjek.Accounts.{User, UserToken, UserNotifier}
+  alias TryalProjek.Accounts.{User, UserProfile}
 
   ## Database getters
 
@@ -350,5 +351,22 @@ defmodule TryalProjek.Accounts do
       {:ok, %{user: user}} -> {:ok, user}
       {:error, :user, changeset, _} -> {:error, changeset}
     end
+  end
+
+  # Ambil profil user ikut user_id
+  def get_user_profile!(user_id) do
+    Repo.get_by!(UserProfile, user_id: user_id)
+  end
+
+  # Untuk LiveView form binding
+  def change_user_profile(%UserProfile{} = profile, attrs \\ %{}) do
+    UserProfile.changeset(profile, attrs)
+  end
+
+  # Update profil
+  def update_user_profile(%UserProfile{} = profile, attrs) do
+    profile
+    |> UserProfile.changeset(attrs)
+    |> Repo.update()
   end
 end

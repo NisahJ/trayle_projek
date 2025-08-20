@@ -1,3 +1,4 @@
+
 defmodule TryalProjek.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
@@ -8,8 +9,9 @@ defmodule TryalProjek.Accounts.User do
     field :password_confirmation, :string, virtual: true
     field :hashed_password, :string, redact: true
     field :current_password, :string, virtual: true, redact: true
-    field :full_name, :string
     field :confirmed_at, :utc_datetime
+    field :full_name, :string
+    field :role, :string
 
     timestamps(type: :utc_datetime)
   end
@@ -45,7 +47,6 @@ defmodule TryalProjek.Accounts.User do
     |> validate_full_name(opts)
     |> validate_password_confirmation(opts)
   end
-
 
   defp validate_email(changeset, opts) do
     changeset
@@ -93,7 +94,7 @@ defmodule TryalProjek.Accounts.User do
   defp maybe_validate_unique_email(changeset, opts) do
     if Keyword.get(opts, :validate_email, true) do
       changeset
-      |> unsafe_validate_unique(:email, TryalProjek.Repo)
+      |> unsafe_validate_unique(:email, SpkpProject.Repo)
       |> unique_constraint(:email)
     else
       changeset
@@ -129,10 +130,9 @@ defmodule TryalProjek.Accounts.User do
   """
   def password_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:password, :password_confirmation])
+    |> cast(attrs, [:password])
     |> validate_confirmation(:password, message: "Kata laluan tidak sepadan")
     |> validate_password(opts)
-    |> maybe_hash_password(opts)
   end
 
   @doc """
