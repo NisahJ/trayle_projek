@@ -19,16 +19,22 @@ defmodule TryalProjek.Accounts.UserProfile do
 
 
   # --- Senarai pilihan ---
-  @gender_options
-         ["Lelaki", "Perempuan"]
+  @gender_options [
+    "Lelaki",
+    "Perempuan"
+  ]
 
-  @district_options
-         ["Beaufort", "Beluran", "Keningau", "Kota Belud", "Kota Kinabalu", "Kota Marudu", "Kota Penyu", "Kudat", "Kunak", "Lahat Datu",
-         "Nabawan", "Papar", "Penampang", "Pitas", "Putatan", "Ranau", "Sandakan", "Semporna", "Sipitang", "Tambunan", "Tawau", "Tenom",
-          "Tongod", "Tuaran"]
+  @district_options [
+    "Beaufort", "Beluran", "Keningau", "Kota Belud", "Kota Kinabalu", "Kota Marudu",
+    "Kuala Penyu", "Kudat", "Kunak", "Lahad Datu", "Nabawan", "Papar", "Penampang",
+    "Pitas", "Putatan", "Ranau", "Sandakan", "Semporna", "Sipitang", "Tambunan",
+    "Tawau", "Tenom", "Tongod", "Tuaran"
+  ]
 
-  @education_options
-         ["SPM", "STPM", "Ijazah Sarjana Muda", "Ijazah Sarjana", "Phd"]
+  @education_options [
+    "SPM", "STPM", "Diploma", "Ijazah Sarjana Muda", "Ijazah Sarjana", "PhD",
+    "Sijil Kemahiran", "Lain - lain"
+  ]
 
 
   # --- Expose sebagai fungsi supaya boleh dipanggil di LiveView ---

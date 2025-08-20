@@ -240,7 +240,7 @@ defmodule TryalProjek.Accounts do
   Deletes the signed token with the given context.
   """
   def delete_user_session_token(token) do
-    Repo.delete_all(UserToken.by_token_and_context_query(token, "session"))
+    Repo.delete_all(UserToken.by_token_and_contexts_query(token, "session"))
     :ok
   end
 
@@ -253,9 +253,6 @@ defmodule TryalProjek.Accounts do
 
       iex> deliver_user_confirmation_instructions(user, &url(~p"/users/confirm/#{&1}"))
       {:ok, %{to: ..., body: ...}}
-
-      iex> deliver_user_confirmation_instructions(confirmed_user, &url(~p"/users/confirm/#{&1}"))
-      {:error, :already_confirmed}
 
   """
   def deliver_user_confirmation_instructions(%User{} = user, confirmation_url_fun)
@@ -368,5 +365,18 @@ defmodule TryalProjek.Accounts do
     profile
     |> UserProfile.changeset(attrs)
     |> Repo.update()
+  end
+
+  # Create or update profile helper used by UserProfileLive
+  def create_or_update_user_profile(attrs) do
+    case Repo.get_by(UserProfile, user_id: attrs["user_id"]) do
+      nil ->
+        %UserProfile{}
+        |> UserProfile.changeset(attrs)
+        |> Repo.insert()
+
+      %UserProfile{} = profile ->
+        update_user_profile(profile, attrs)
+    end
   end
 end
